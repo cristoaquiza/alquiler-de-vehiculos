@@ -1,72 +1,64 @@
 package ec.edu.epn;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CatalogoDeVehiculos {
-	public static final String NOMBRE_DE_ARCHIVO = "catalogo_de_vehiculos";
-
-	private static List<Vehiculo> catalogo = new ArrayList<Vehiculo>();
+	public static final String NOMBRE_DE_ARCHIVO_VEHICULOS = "catalogo_de_vehiculos";
 
 	public static void init() {
-		File archivo = new File(NOMBRE_DE_ARCHIVO);
-		if (archivo.exists()) {
-			cargarCatalogo(archivo);
-		} else {
+		File archivo = new File(NOMBRE_DE_ARCHIVO_VEHICULOS);
+		if (!archivo.exists()) {
+//			System.out.println("INFO: Creando archivo de vehiculos...");
 			crearCatalogo(archivo);
 		}
+//		System.out.println("INFO: Leyendo vehiculos desde el archivo...");
+		imprimirCatalogo();
 	}
 
 	private static void crearCatalogo(File archivo) {
 		try {
 			archivo.createNewFile();
-			catalogo = cargarObjetosEnLista();
-			FileOutputStream archivoOut = new FileOutputStream(archivo);
-			ObjectOutputStream escritor = new ObjectOutputStream(archivoOut);
-			escritor.writeObject(catalogo);
+			List<Vehiculo> catalogo = new ArrayList<Vehiculo>();
+			catalogo = preCargarVehiculos();
+			ServiciosDeArchivo.escribirVehiculosEnArchivo(catalogo);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block: error al crear el archivo
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private static List<Vehiculo> cargarObjetosEnLista() {
-		List<Vehiculo> listaDeObjetos = new ArrayList<Vehiculo>();
-		listaDeObjetos.add(new Vehiculo("Chevrolet", "azul", "PZA-435",
+	private static List<Vehiculo> preCargarVehiculos() {
+		List<Vehiculo> vehiculos = new ArrayList<Vehiculo>();
+
+		vehiculos.add(new Vehiculo("Chevrolet", "azul", "PZA-435",
 				EstadoDeVehiculo.LIBRE, TipoDeCosto.SEGUNDACLASE));
-		listaDeObjetos.add(new Vehiculo("Mazda", "blanco", "PZB-123",
+
+		vehiculos.add(new Vehiculo("Mazda", "blanco", "PZB-123",
 				EstadoDeVehiculo.ENMANTENIMIENTO, TipoDeCosto.PRIMERACLASE));
-		listaDeObjetos.add(new Vehiculo("Hyundai", "verde", "PZC-789",
+
+		vehiculos.add(new Vehiculo("Hyundai", "verde", "PZC-789",
 				EstadoDeVehiculo.LIBRE, TipoDeCosto.TERCERACLASE));
-		return listaDeObjetos;
+		return vehiculos;
 	}
 
-	private static void cargarCatalogo(File archivo) {
-		try {
-			FileInputStream archivoIn = new FileInputStream(archivo);
-			ObjectInputStream lector = new ObjectInputStream(archivoIn);
-			catalogo = (List<Vehiculo>) lector.readObject();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block: error en archivo
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block: error en lector
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block:error al castear el objeto del
-			// archivo
-			e.printStackTrace();
+	public static void imprimirCatalogo() {
+		List<Vehiculo> catalogo = ServiciosDeArchivo.leerVehiculosDeArchivo();
+		if (catalogo == null) {
+			System.out.println("INFO: Catálogo de vehículos vacío");
+		} else {
+			System.out.println("***CATALOGO DE VEHICULOS***");
+			for (Vehiculo v : catalogo) {
+				System.out.println(v);
+			}
+			System.out.println();
 		}
 	}
 
 	public static Vehiculo buscarVehiculoPorPlaca(String placa) {
+		List<Vehiculo> catalogo = ServiciosDeArchivo.leerVehiculosDeArchivo();
 		int indice = -1, contador = 0;
 		for (Vehiculo v : catalogo) {
 			if (v.getPlaca().compareTo(placa) == 0) {
@@ -82,8 +74,21 @@ public class CatalogoDeVehiculos {
 			return null;
 		}
 	}
-	
-	public static int buscarIndiceDeVehiculoPorPlaca(String placa) {
+
+	public static void actualizarVehiculo(Vehiculo vehiculo) {
+		List<Vehiculo> catalogo = ServiciosDeArchivo.leerVehiculosDeArchivo();
+		int indice = buscarIndiceDeVehiculo(vehiculo.getPlaca());
+		if (indice != -1) {
+			catalogo.set(indice, vehiculo);
+			ServiciosDeArchivo.escribirVehiculosEnArchivo(catalogo);
+		} else {
+			System.out
+					.println("ERROR: No existe el vehículo que se intenta actualizar");
+		}
+	}
+
+	private static int buscarIndiceDeVehiculo(String placa) {
+		List<Vehiculo> catalogo = ServiciosDeArchivo.leerVehiculosDeArchivo();
 		int indice = -1, contador = 0;
 		for (Vehiculo v : catalogo) {
 			if (v.getPlaca().compareTo(placa) == 0) {
@@ -95,27 +100,4 @@ public class CatalogoDeVehiculos {
 		}
 		return indice;
 	}
-	
-	public static void imprimirCatalogo() {
-		for(Vehiculo v: catalogo) {
-			System.out.println(v);
-		}
-	}
-
-	public static void cambiarEstadoEnVehiculo(String placa, EstadoDeVehiculo estado) {
-		int indice = buscarIndiceDeVehiculoPorPlaca(placa);
-		catalogo.get(indice).setEstado(estado);
-		//TODO:actualizar catalogo?
-	}
-
-	public static void actualizarCatalogoEnArchivo() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public static void actualizarEstadoDeVehiculo(String placa,
-			EstadoDeVehiculo estado) {
-		
-	}
-
 }

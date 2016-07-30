@@ -1,27 +1,30 @@
 package ec.edu.epn;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 
 public class Prestamo implements Serializable {
 	private Vehiculo vehiculo;
 	private Date fechaDeRenta;
-	private Date FechaDeRetorno;
+	private Date fechaPosibleDeRetorno;
 	private double total;
 	private double recargo;
 	private double descuento;
 	private double totalAPagar;
 
-	public Prestamo(Vehiculo vehiculo, Date fechaDeRenta, Date fechaDeRetorno) {
+	public Prestamo(Vehiculo vehiculo, Date fechaDeRenta,
+			Date fechaPosibleDeRetorno) {
 		super();
 		this.vehiculo = vehiculo;
 		this.fechaDeRenta = fechaDeRenta;
-		FechaDeRetorno = fechaDeRetorno;
+		this.fechaPosibleDeRetorno = fechaPosibleDeRetorno;
 	}
 
 	@Override
 	public String toString() {
-		return vehiculo + "\t" + fechaDeRenta;
+		DateFormat formato = DateFormat.getDateInstance(DateFormat.MEDIUM);
+		return vehiculo + "\n FECHA DE RENTA: " + formato.format(fechaDeRenta) + "\n FECHA POSIBLE DE RETORNO: " + formato.format(fechaPosibleDeRetorno)+"\n";
 	}
 
 	public Vehiculo getVehiculo() {
@@ -40,12 +43,12 @@ public class Prestamo implements Serializable {
 		this.fechaDeRenta = fechaDeRenta;
 	}
 
-	public Date getFechaDeRetorno() {
-		return FechaDeRetorno;
+	public Date getFechaPosibleDeRetorno() {
+		return fechaPosibleDeRetorno;
 	}
 
-	public void setFechaDeRetorno(Date fechaDeRetorno) {
-		FechaDeRetorno = fechaDeRetorno;
+	public void setFechaPosibleDeRetorno(Date fechaPosibleDeRetorno) {
+		this.fechaPosibleDeRetorno = fechaPosibleDeRetorno;
 	}
 
 	public double getTotal() {

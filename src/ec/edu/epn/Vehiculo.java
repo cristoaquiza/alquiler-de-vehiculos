@@ -21,8 +21,8 @@ public class Vehiculo implements Serializable {
 
 	@Override
 	public String toString() {
-		return marca + ", " + color + ", " + placa + ", "
-				+ estadoDeVehiculo.getNombre() + "," + tipoDeCosto.getNombre();
+		return "-INFORMACION DEL VEHICULO: " + "Marca: " + marca + ", Color: " + color + ", Placa: " + placa + ", Estado: "
+				+ estadoDeVehiculo.getNombre() + ", Tipo de Costo: " + tipoDeCosto.getNombre();
 	}
 
 	public String getMarca() {

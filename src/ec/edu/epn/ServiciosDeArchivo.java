@@ -11,12 +11,12 @@ import java.util.List;
 
 public class ServiciosDeArchivo {
 
-	public static void escribirPrestamosEnArchivo(List<Prestamo> registroDePrestamos, String nombreDeArchivo) {
+	public static void escribirPrestamosEnArchivo(List<Prestamo> prestamos) {
 		try {
-			FileOutputStream archivo = new FileOutputStream(nombreDeArchivo);
+			FileOutputStream archivo = new FileOutputStream(
+					RegistroDePrestamos.NOMBRE_DE_ARCHIVO_PRESTAMOS);
 			ObjectOutputStream escritor = new ObjectOutputStream(archivo);
-			escritor.writeObject(registroDePrestamos);
-			escritor.close();
+			escritor.writeObject(prestamos);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -26,13 +26,12 @@ public class ServiciosDeArchivo {
 		}
 	}
 
-	public static List<Prestamo> leerPrestamosDeArchivo(String nombreDeArchivo) {
-		List<Prestamo> prestamos = new ArrayList<Prestamo>();
+	public static List<Prestamo> leerPrestamosDeArchivo() {
+		List<Prestamo> prestamos = null;
 		try {
-			FileInputStream archivo = new FileInputStream(nombreDeArchivo);
+			FileInputStream archivo = new FileInputStream(RegistroDePrestamos.NOMBRE_DE_ARCHIVO_PRESTAMOS);
 			ObjectInputStream lector = new ObjectInputStream(archivo);
 			prestamos = (List<Prestamo>) lector.readObject();
-			lector.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,12 +45,11 @@ public class ServiciosDeArchivo {
 		return prestamos;
 	}
 
-	public static void escribirVehiculosEnArchivo(List<Vehiculo> catalogoDeVehiculos, String nombreDeArchivo) {
+	public static void escribirVehiculosEnArchivo(List<Vehiculo> vehiculos) {
 		try {
-			FileOutputStream archivo = new FileOutputStream(nombreDeArchivo);
+			FileOutputStream archivo = new FileOutputStream(CatalogoDeVehiculos.NOMBRE_DE_ARCHIVO_VEHICULOS);
 			ObjectOutputStream escritor = new ObjectOutputStream(archivo);
-			escritor.writeObject(catalogoDeVehiculos);
-			escritor.close();
+			escritor.writeObject(vehiculos);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,13 +59,12 @@ public class ServiciosDeArchivo {
 		}
 	}
 
-	public static List<Vehiculo> leerVehiculosDeArchivo(String nombreDeArchivo) {
-		List<Vehiculo> vehiculos = new ArrayList<Vehiculo>();
+	public static List<Vehiculo> leerVehiculosDeArchivo() {
+		List<Vehiculo> vehiculos = null;//aqui
 		try {
-			FileInputStream archivo = new FileInputStream(nombreDeArchivo);
+			FileInputStream archivo = new FileInputStream(CatalogoDeVehiculos.NOMBRE_DE_ARCHIVO_VEHICULOS);
 			ObjectInputStream lector = new ObjectInputStream(archivo);
 			vehiculos = (List<Vehiculo>) lector.readObject();
-			lector.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

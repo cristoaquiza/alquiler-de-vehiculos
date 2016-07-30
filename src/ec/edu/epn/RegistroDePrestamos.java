@@ -1,58 +1,96 @@
 package ec.edu.epn;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RegistroDePrestamos {
-	private static final String NOMBRE_DE_ARCHIVO = "registro_de_prestamos";
+	public static final String NOMBRE_DE_ARCHIVO_PRESTAMOS = "registro_de_prestamos";
 
-	private static List<Prestamo> registroDePrestamos = new ArrayList<Prestamo>();
-
-	public static void registrarPrestamo(Prestamo prestamo) {
-		registroDePrestamos.add(prestamo);
-		actualizarRegistroDePrestamos();// actualiza el archivo de registro de
-										// prestamos
-		CatalogoDeVehiculos.actualizarEstadoDeVehiculo(prestamo.getVehiculo()
-				.getPlaca(), EstadoDeVehiculo.RENTADO);// actualiza el estado de
-														// un vehiculo en el
-														// catalogo
-
-		// TODO:ingresar en archivo
-		almacenarRegistroEnArchivo();
-		CatalogoDeVehiculos.cambiarEstadoEnVehiculo(prestamo.getVehiculo()
-				.getPlaca(), EstadoDeVehiculo.RENTADO);
-		CatalogoDeVehiculos.actualizarCatalogoEnArchivo();
+	public static void init() {
+		File archivo = new File(NOMBRE_DE_ARCHIVO_PRESTAMOS);
+		if (!archivo.exists()) {
+//			System.out.println("INFO: Creando archivo de prestamos...");
+			crearRegistro(archivo);
+			imprimirRegistro();
+		} else {
+//			System.out.println("INFO: Leyendo préstamos desde el archivo...");
+			imprimirRegistro();
+		}
 	}
 
-	private static void actualizarRegistroDePrestamos() {
-		ServiciosDeArchivo.escribirPrestamosEnArchivo(registroDePrestamos,
-				NOMBRE_DE_ARCHIVO);
-
+	private static void crearRegistro(File archivo) {
+		try {
+			archivo.createNewFile();
+			List<Prestamo> prestamos = null;
+			ServiciosDeArchivo.escribirPrestamosEnArchivo(prestamos);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void imprimirRegistro() {
-		// TODO:leer desde archivo
-		for (Prestamo p : registroDePrestamos) {
-			System.out.println(p);
+		List<Prestamo> prestamos = ServiciosDeArchivo.leerPrestamosDeArchivo();
+		if (prestamos == null) {
+			System.out.println("INFO: Registro de préstamos vacío");
+		} else {
+			System.out.println("***REGISTRO DE PRESTAMOS***");
+			for (Prestamo p : prestamos) {
+				System.out.println(p);
+			}
+			System.out.println();
 		}
 	}
 
-	private static void almacenarRegistroEnArchivo() {
-		try {
-			FileOutputStream archivoOut = new FileOutputStream(
-					"registro_de_prestamos");
-			ObjectOutputStream escritor = new ObjectOutputStream(archivoOut);
-			escritor.writeObject(registroDePrestamos);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block:error al leer archivo
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block: error al intentar escribir
-			e.printStackTrace();
+	public static void registrarPrestamo(Prestamo prestamo) {
+		List<Prestamo> prestamos = ServiciosDeArchivo.leerPrestamosDeArchivo();
+		if (prestamos == null) {
+			prestamos = new ArrayList<Prestamo>();
+		}
+		prestamos.add(prestamo);
+		ServiciosDeArchivo.escribirPrestamosEnArchivo(prestamos);
+		CatalogoDeVehiculos.actualizarVehiculo(prestamo.getVehiculo());
+	}
+
+	public static Prestamo buscarPrestamoPorPlaca(String placa) {
+		List<Prestamo> prestamos = ServiciosDeArchivo.leerPrestamosDeArchivo();
+		int indice = -1, contador = 0;
+		for (Prestamo p : prestamos) {
+			if (p.getVehiculo().getPlaca().compareTo(placa) == 0) {
+				indice = contador;
+				break;
+			} else {
+				contador++;
+			}
+		}
+		if (indice != 1) {
+			return prestamos.get(indice);
+		} else {
+			return null;
 		}
 	}
+	
+	public static int buscarIndiceDePrestamoPorPlaca(String placa) {
+		List<Prestamo> prestamos = ServiciosDeArchivo.leerPrestamosDeArchivo();
+		int indice = -1, contador = 0;
+		for (Prestamo p : prestamos) {
+			if (p.getVehiculo().getPlaca().compareTo(placa) == 0) {
+				indice = contador;
+				break;
+			} else {
+				contador++;
+			}
+		}
+		return indice;
+	}
+
+	public static void eliminarPrestamo(Prestamo prestamo) {
+		List<Prestamo> prestamos = ServiciosDeArchivo.leerPrestamosDeArchivo();
+		int indice = buscarIndiceDePrestamoPorPlaca(prestamo.getVehiculo().getPlaca());
+		prestamos.remove(indice);
+		ServiciosDeArchivo.escribirPrestamosEnArchivo(prestamos);
+	}
+
 }

@@ -1,6 +1,7 @@
 package ec.edu.epn;
 
 public enum EstadoDeVehiculo {
+//	TODO: borrar codigo
 	RENTADO("r", "rentado"), LIBRE("l", "libre"), ENMANTENIMIENTO("m", "en mantenimiento");
 	
 	private String codigo;
