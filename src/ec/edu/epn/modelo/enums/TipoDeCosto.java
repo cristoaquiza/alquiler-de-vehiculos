@@ -1,4 +1,4 @@
-package ec.edu.epn;
+package ec.edu.epn.modelo.enums;
 
 public enum TipoDeCosto {
 	PRIMERACLASE("Primera clase", 50.45, 25.00, 15.00), SEGUNDACLASE(

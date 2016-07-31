@@ -1,6 +1,11 @@
-package ec.edu.epn;
+package ec.edu.epn.modelo;
 
 import java.io.Serializable;
+import java.util.List;
+
+import ec.edu.epn.ServiciosDeArchivo;
+import ec.edu.epn.modelo.enums.EstadoDeVehiculo;
+import ec.edu.epn.modelo.enums.TipoDeCosto;
 
 public class Vehiculo implements Serializable {
 	private String marca;
@@ -21,8 +26,10 @@ public class Vehiculo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "-INFORMACION DEL VEHICULO: " + "Marca: " + marca + ", Color: " + color + ", Placa: " + placa + ", Estado: "
-				+ estadoDeVehiculo.getNombre() + ", Tipo de Costo: " + tipoDeCosto.getNombre();
+		return "-INFORMACION DEL VEHICULO: " + "Marca: " + marca + ", Color: "
+				+ color + ", Placa: " + placa + ", Estado: "
+				+ estadoDeVehiculo.getNombre() + ", Tipo de Costo: "
+				+ tipoDeCosto.getNombre();
 	}
 
 	public String getMarca() {
@@ -65,6 +72,21 @@ public class Vehiculo implements Serializable {
 		this.tipoDeCosto = tipoDeCosto;
 	}
 
-	// TODO: metodo para cambiar estado
-
+	public static Vehiculo buscarVehiculoPorPlaca(String placa) {
+		List<Vehiculo> catalogo = ServiciosDeArchivo.leerVehiculosDeArchivo();
+		int indice = -1, contador = 0;
+		for (Vehiculo v : catalogo) {
+			if (v.getPlaca().compareTo(placa) == 0) {
+				indice = contador;
+				break;
+			} else {
+				contador++;
+			}
+		}
+		if (indice != -1) {
+			return catalogo.get(indice);
+		} else {
+			return null;
+		}
+	}
 }

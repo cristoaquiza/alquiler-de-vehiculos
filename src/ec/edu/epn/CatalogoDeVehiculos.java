@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ec.edu.epn.modelo.Vehiculo;
+import ec.edu.epn.modelo.enums.EstadoDeVehiculo;
+import ec.edu.epn.modelo.enums.TipoDeCosto;
+
 public class CatalogoDeVehiculos {
 	public static final String NOMBRE_DE_ARCHIVO_VEHICULOS = "catalogo_de_vehiculos";
 

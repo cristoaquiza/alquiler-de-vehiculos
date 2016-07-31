@@ -2,6 +2,8 @@ package ec.edu.epn;
 
 import java.util.Calendar;
 
+import ec.edu.epn.modelo.Prestamo;
+
 public class RegistroDeFacturas {
 
 	public static void generarFactura(int restaDeDias, Prestamo prestamo) {

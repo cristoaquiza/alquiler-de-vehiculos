@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ec.edu.epn.modelo.Prestamo;
+
 public class RegistroDePrestamos {
 	public static final String NOMBRE_DE_ARCHIVO_PRESTAMOS = "registro_de_prestamos";
 

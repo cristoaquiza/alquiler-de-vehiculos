@@ -1,8 +1,9 @@
-package ec.edu.epn;
+package ec.edu.epn.modelo;
 
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class Prestamo implements Serializable {
 	private Vehiculo vehiculo;
@@ -12,6 +13,8 @@ public class Prestamo implements Serializable {
 	private double recargo;
 	private double descuento;
 	private double totalAPagar;
+	private List<Vehiculo> catalogoDeVehiculos;
+	private List<Prestamo> prestamos;
 
 	public Prestamo(Vehiculo vehiculo, Date fechaDeRenta,
 			Date fechaPosibleDeRetorno) {
@@ -19,12 +22,26 @@ public class Prestamo implements Serializable {
 		this.vehiculo = vehiculo;
 		this.fechaDeRenta = fechaDeRenta;
 		this.fechaPosibleDeRetorno = fechaPosibleDeRetorno;
+		this.catalogoDeVehiculos = cargarVehiculos();
+		this.prestamos = cargarPrestamos();
+	}
+
+	private List<Prestamo> cargarPrestamos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private List<Vehiculo> cargarVehiculos() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String toString() {
 		DateFormat formato = DateFormat.getDateInstance(DateFormat.MEDIUM);
-		return vehiculo + "\n FECHA DE RENTA: " + formato.format(fechaDeRenta) + "\n FECHA POSIBLE DE RETORNO: " + formato.format(fechaPosibleDeRetorno)+"\n";
+		return vehiculo + "\n FECHA DE RENTA: " + formato.format(fechaDeRenta)
+				+ "\n FECHA POSIBLE DE RETORNO: "
+				+ formato.format(fechaPosibleDeRetorno) + "\n";
 	}
 
 	public Vehiculo getVehiculo() {

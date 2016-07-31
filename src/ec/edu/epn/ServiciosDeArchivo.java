@@ -9,6 +9,9 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import ec.edu.epn.modelo.Prestamo;
+import ec.edu.epn.modelo.Vehiculo;
+
 public class ServiciosDeArchivo {
 
 	public static void escribirPrestamosEnArchivo(List<Prestamo> prestamos) {
