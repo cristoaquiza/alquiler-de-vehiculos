@@ -7,17 +7,22 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ec.edu.epn.modelo.CatalogoDeVehiculos;
 import ec.edu.epn.modelo.Prestamo;
+import ec.edu.epn.modelo.RegistroDePrestamos;
 import ec.edu.epn.modelo.Vehiculo;
 import ec.edu.epn.modelo.enums.EstadoDeVehiculo;
 
 public class Main {
 
 	public static void main(String[] args) {
-		iniciarProyecto();
-
 		try {
-			System.out.print("Ingrese información: ");
+			CatalogoDeVehiculos catalogoDeVehiculos = new CatalogoDeVehiculos();
+			RegistroDePrestamos registroDePrestamos = new RegistroDePrestamos();
+			catalogoDeVehiculos.imprimirCatalogoDeVehiculos();
+			registroDePrestamos.imprimirRegistroDePrestamos();
+
+			System.out.print("\nIngrese información: ");
 			System.out.flush();
 			Scanner entrada = new Scanner(System.in);
 			String accion = entrada.next();
@@ -39,12 +44,47 @@ public class Main {
 
 			switch (accion) {
 			case "P":
-				Vehiculo vehiculo = Vehiculo.buscarVehiculoPorPlaca(placa);
-				Prestamo prestamo = new Prestamo(vehiculo, fechaDeRenta,
-						fechaPosibleDeRetorno);
+				Vehiculo vehiculo = catalogoDeVehiculos
+						.buscarVehiculoPorPlaca(placa);
+
+				if (vehiculo.getEstado().getNombre()
+						.compareTo(EstadoDeVehiculo.RENTADO.getNombre()) == 0) {
+					System.out
+							.println(">ERROR: El auto ya se encuentra rentado");
+				} else {
+					vehiculo.setEstado(EstadoDeVehiculo.RENTADO);
+					catalogoDeVehiculos.actualizarCatalogoDeVehiculos(vehiculo);
+
+					int numeroDeDias = Integer.parseInt(dias);
+					Calendar fechaDeRenta = Calendar.getInstance();
+					Calendar fechaPosibleDeRetorno = Calendar.getInstance();
+					fechaPosibleDeRetorno.add(Calendar.DAY_OF_MONTH,
+							numeroDeDias);
+					Prestamo prestamo = new Prestamo(vehiculo,
+							fechaDeRenta.getTime(),
+							fechaPosibleDeRetorno.getTime());
+					registroDePrestamos.registrarPrestamo(prestamo);
+					System.out
+							.println(">>>> INFO: Préstamo registrado con éxito <<<<");
+				}
 				break;
 			case "R":
-				retornar(placa);
+				Calendar fechaDeRetorno = Calendar.getInstance();
+				fechaDeRetorno.set(Calendar.DAY_OF_MONTH, 2);
+				fechaDeRetorno.set(Calendar.MONTH, 7);
+				fechaDeRetorno.set(Calendar.YEAR, 2016);
+				System.out.println("Fecha de retorno seteada: "
+						+ fechaDeRetorno.getTime());
+
+				Prestamo prestamo = registroDePrestamos
+						.buscarPrestamoPorPlaca(placa);
+				prestamo.getVehiculo().setEstado(EstadoDeVehiculo.LIBRE);
+				catalogoDeVehiculos.actualizarCatalogoDeVehiculos(prestamo
+						.getVehiculo());
+
+				registroDePrestamos.generarPago(fechaDeRetorno, prestamo);
+
+				registroDePrestamos.eliminarPrestamo(prestamo);
 				break;
 			default:
 				break;
@@ -76,7 +116,7 @@ public class Main {
 			throw new Exception(">ERROR: La placa " + placa + " no es válida");
 		}
 
-		patron = Pattern.compile("[0-9]");
+		patron = Pattern.compile("[0-9]*");
 		coincidencia = patron.matcher(dias);
 		if (coincidencia.find()) {
 			diasOk = true;
@@ -89,70 +129,6 @@ public class Main {
 			return true;
 		} else {
 			return false;
-		}
-	}
-
-	private static void iniciarProyecto() {
-		CatalogoDeVehiculos.init();
-		RegistroDePrestamos.init();
-	}
-
-	private static void prestar(String placa, String d) {
-		int dias = Integer.parseInt(d);
-		Vehiculo vehiculo = CatalogoDeVehiculos.buscarVehiculoPorPlaca(placa);
-		if (vehiculo != null) {
-			if (vehiculo.getEstado().getNombre()
-					.compareTo(EstadoDeVehiculo.RENTADO.getNombre()) == 0) {
-				System.out.println("ERROR: El auto ya se encuentra rentado");
-			} else {
-				vehiculo.setEstado(EstadoDeVehiculo.RENTADO);
-				Calendar fechaActual = Calendar.getInstance();
-				Calendar fechaPosibleDeRetorno = Calendar.getInstance();
-				fechaPosibleDeRetorno.add(Calendar.DAY_OF_MONTH, dias);
-				DateFormat formato = DateFormat
-						.getDateInstance(DateFormat.MEDIUM);//
-				System.out.println(formato.format(fechaPosibleDeRetorno
-						.getTime()));//
-				RegistroDePrestamos
-						.registrarPrestamo(new Prestamo(vehiculo, fechaActual
-								.getTime(), fechaPosibleDeRetorno.getTime()));
-				RegistroDePrestamos.imprimirRegistro();
-			}
-		} else {
-			System.out
-					.println("ERROR: El vehículo no se encuentra en el catalogo");
-		}
-	}
-
-	private static void retornar(String placa) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, 27);
-		calendar.set(Calendar.MONTH, 6);
-		calendar.set(Calendar.YEAR, 2016);
-		Date fechaDeRetorno = calendar.getTime();
-
-		Prestamo prestamo = RegistroDePrestamos.buscarPrestamoPorPlaca(placa);
-		if (prestamo != null) {
-			System.out.println(fechaDeRetorno);
-			System.out.println(prestamo);
-
-			Calendar retorno = Calendar.getInstance();
-			retorno.setTime(fechaDeRetorno);
-			int diaDeRetorno = retorno.get(Calendar.DAY_OF_MONTH);
-
-			Calendar retornoPosible = Calendar.getInstance();
-			retornoPosible.setTime(prestamo.getFechaPosibleDeRetorno());
-			int diaPosibleDeRetorno = retornoPosible.get(Calendar.DAY_OF_MONTH);
-
-			// TODO:Resta esta mal, si fuera de diferentes meses falla
-
-			int restaDeDias = diaDeRetorno - diaPosibleDeRetorno;
-
-			prestamo.getVehiculo().setEstado(EstadoDeVehiculo.LIBRE);
-			RegistroDeFacturas.generarFactura(restaDeDias, prestamo);
-		} else {
-			System.out
-					.println("ERROR: No existe un vehículo rentado con esa placa");
 		}
 	}
 }

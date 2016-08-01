@@ -3,9 +3,9 @@ package ec.edu.epn.modelo;
 import java.io.Serializable;
 import java.util.List;
 
-import ec.edu.epn.ServiciosDeArchivo;
 import ec.edu.epn.modelo.enums.EstadoDeVehiculo;
 import ec.edu.epn.modelo.enums.TipoDeCosto;
+import ec.edu.epn.utils.ServiciosDeArchivo;
 
 public class Vehiculo implements Serializable {
 	private String marca;
@@ -70,23 +70,5 @@ public class Vehiculo implements Serializable {
 
 	public void setTipoDeCosto(TipoDeCosto tipoDeCosto) {
 		this.tipoDeCosto = tipoDeCosto;
-	}
-
-	public static Vehiculo buscarVehiculoPorPlaca(String placa) {
-		List<Vehiculo> catalogo = ServiciosDeArchivo.leerVehiculosDeArchivo();
-		int indice = -1, contador = 0;
-		for (Vehiculo v : catalogo) {
-			if (v.getPlaca().compareTo(placa) == 0) {
-				indice = contador;
-				break;
-			} else {
-				contador++;
-			}
-		}
-		if (indice != -1) {
-			return catalogo.get(indice);
-		} else {
-			return null;
-		}
 	}
 }
