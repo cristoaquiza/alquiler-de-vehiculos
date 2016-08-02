@@ -28,11 +28,11 @@ public class RegistroDePrestamos {
 		if (!archivo.exists()) {
 			crearRegistro(archivo);
 		} else {
-			cargarPrestamos(archivo);
+			cargarRegistro(archivo);
 		}
 	}
 
-	private void cargarPrestamos(File archivo) throws ClassNotFoundException,
+	private void cargarRegistro(File archivo) throws ClassNotFoundException,
 			IOException {
 		this.registroDePrestamos = serviciosDeArchivo
 				.leerRegistroDePrestamosDesdeArchivo();
@@ -53,9 +53,9 @@ public class RegistroDePrestamos {
 
 	public void imprimirRegistroDePrestamos() {
 		if (this.registroDePrestamos == null) {
-			System.out.println(">>>> INFO: Registro de prÈstamos vacÌo <<<<");
+			System.out.println(">>>> INFO: Registro de pr√©stamos vac√≠o <<<<");
 		} else {
-			System.out.println("\t\t*** REGISTRO DE PR…STAMOS ***");
+			System.out.println("\t\t*** REGISTRO DE PR√âSTAMOS ***");
 			for (Prestamo p : this.registroDePrestamos) {
 				System.out.println(p);
 			}
@@ -85,7 +85,7 @@ public class RegistroDePrestamos {
 		if (indice != 1) {
 			return this.registroDePrestamos.get(indice);
 		} else {
-			throw new Exception(">ERROR: El vehÌculo no se encuentra prestado");
+			throw new Exception(">ERROR: El veh√≠culo no se encuentra prestado");
 		}
 	}
 
@@ -103,7 +103,7 @@ public class RegistroDePrestamos {
 			return indice;
 		} else {
 			throw new Exception(
-					">ERROR: El vehÌculo no se encuentra en prÈstamo");
+					">ERROR: El veh√≠culo no se encuentra en pr√©stamo");
 		}
 	}
 
